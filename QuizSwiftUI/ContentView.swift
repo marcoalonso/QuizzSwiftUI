@@ -9,10 +9,11 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject var viewModel = QuizVieModel()
-    @State private var progressValue: Float = 0.5
+    @State private var progressValue: Float = 0.0
     @State var colorButtonVerdadero = 0
     @State var colorButtonFalso = 0
     @State private var mostrarAlerta = false
+    @State private var areButtonsDisabled = false
     
     var body: some View {
         ZStack {
@@ -30,6 +31,7 @@ struct ContentView: View {
                 
                 Text(viewModel.preguntas[viewModel.numeroPregunta].texto)
                     .font(.title)
+                    .foregroundColor(.white)
                     .frame(maxHeight: 220)
                 
                 VStack {
@@ -50,6 +52,7 @@ struct ContentView: View {
                             )
                             .cornerRadius(25)
                     }
+                    .disabled(areButtonsDisabled)
                     
                     Button {
                         revisarRespuesta(false, respuesta: "FALSO")
@@ -66,6 +69,7 @@ struct ContentView: View {
                             )
                             .cornerRadius(25)
                     }
+                    .disabled(areButtonsDisabled)
                     
                 }
                 
@@ -88,6 +92,10 @@ struct ContentView: View {
                     primaryButton: .default(Text("Reiniciar")) {
                         viewModel.numeroPregunta = 0
                         viewModel.puntuacion = 0
+                        colorButtonFalso = 0
+                        colorButtonVerdadero = 0
+                        progressValue = 0.0
+                        areButtonsDisabled = false
                     },
                     secondaryButton: .default(Text("Salir")) {
                         exit(0)
@@ -98,25 +106,27 @@ struct ContentView: View {
     }
     
     func revisarRespuesta(_ verdaderoButton: Bool , respuesta: String){
-        
-        if verdaderoButton {
-            let respuestaCorrecta = viewModel.revisarRespuestaUser(respuesta: respuesta)
-            if respuestaCorrecta {
-                print("Correcta :D ")
-                
+        areButtonsDisabled = true
+        let respuestaCorrecta = viewModel.revisarRespuestaUser(respuesta: respuesta)
+        if respuestaCorrecta {
+            viewModel.playSound()
+            print("Correcta :D ")
+            if verdaderoButton {
                 colorButtonVerdadero = 1
             } else {
-                print("Incorrecta :/")
-                colorButtonVerdadero = 2
-            }
-        } else {
-            let respuestaCorrecta = viewModel.revisarRespuestaUser(respuesta: respuesta)
-            if respuestaCorrecta {
-                print("Correcta :D ")
-                
                 colorButtonFalso = 1
+            }
+            
+        } else {
+            print("Incorrecta :/")
+            
+            //Vibracion
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.error)
+            
+            if verdaderoButton {
+                colorButtonVerdadero = 2
             } else {
-                print("Incorrecta :/")
                 colorButtonFalso = 2
             }
         }
@@ -124,16 +134,16 @@ struct ContentView: View {
         
         ///AVANZAR A LA SIGUIENTE PREGUNTA
         if viewModel.siguientePregunta() {
-            _ = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
+            _ = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { _ in
                 viewModel.numeroPregunta += 1
             print("Cambiar pregunta")
                 colorButtonFalso = 0
                 colorButtonVerdadero = 0
+                areButtonsDisabled = false
+                progressValue = viewModel.obtenerProgreso()
             }
         } else {
-            
             mostrarAlerta = true
-                
         }
         
         

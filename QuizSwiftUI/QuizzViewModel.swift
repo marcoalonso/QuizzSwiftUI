@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AVFoundation
 
 class QuizVieModel: ObservableObject {
     @Published var preguntas = [
@@ -21,6 +22,8 @@ class QuizVieModel: ObservableObject {
     
     @Published var numeroPregunta = 0
     @Published var puntuacion = 0
+    
+    var reproductor: AVAudioPlayer?
     
     func revisarRespuestaUser(respuesta: String) -> Bool {
         if respuesta == preguntas[numeroPregunta].respuesta {
@@ -53,6 +56,18 @@ class QuizVieModel: ObservableObject {
             return true
         } else {
             return false
+        }
+    }
+    
+    func playSound() {
+        guard let url = Bundle.main.url(forResource: "sound", withExtension: "mp3") else {
+            return
+        }
+        do {
+            reproductor = try AVAudioPlayer(contentsOf: url)
+            reproductor?.play() //si hay un reproductor, ejecuta el metod play
+        } catch {
+            print("Error al reproducir sonido, \(error.localizedDescription)")
         }
     }
 }
