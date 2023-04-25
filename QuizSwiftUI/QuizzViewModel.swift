@@ -18,6 +18,13 @@ class QuizVieModel: ObservableObject {
         Pregunta(texto: "El cráneo es el hueso más fuerte del cuerpo humano.", respuesta: "FALSO", imagen: "craneo"),
         Pregunta(texto: "La Coca Cola esta disponible en todos los países del mundo.", respuesta: "FALSO", imagen: "coca"),
         
+        Pregunta(texto: "Ningún papa ha muerto nunca violentamente.", respuesta: "FALSO", imagen: "papa"),
+        Pregunta(texto: "El brócoli contiene más vitamina C que los limones.", respuesta: "VERDADERO", imagen: "brocoli"),
+        Pregunta(texto: "Los relámpagos se ven antes de escucharse porque la luz viaja más rápido que el sonido.", respuesta: "VERDADERO", imagen: "rayo"),
+        Pregunta(texto: "Cuantos más megapíxeles, mejor calidad de imagen.", respuesta: "FALSO", imagen: "pixeles"),
+        Pregunta(texto: "Una ciudad perdida yace bajo el mar Mediterráneo.", respuesta: "VERDADERO", imagen: "mar"),
+        Pregunta(texto: "El punto llamado NEMO es el punto más difícil de alcanzar de todo el planeta.", respuesta: "VERDADERO", imagen: "nemo")
+        
     ]
     
     @Published var numeroPregunta = 0
